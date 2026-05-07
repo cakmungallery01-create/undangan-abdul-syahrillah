@@ -506,7 +506,7 @@ const invite = document.getElementById('invite');
 const chatSound = document.getElementById('chatSound');
 const music = document.getElementById('music');
 
-openBtn.addEventListener('click', async () => {
+openBtn.addEventListener('click', () => {
 
 phone.style.display = 'block';
 
@@ -516,67 +516,53 @@ opening.style.opacity='0';
 
 setTimeout(()=>{
 opening.style.display='none';
-},900);
+},800);
 
-/* MUSIC PLAY FIX */
-
-music.volume = 0;
-
-try{
-await music.play();
-
-let fade = 0;
-
-const fadeMusic = setInterval(()=>{
-
-fade += 0.02;
-
-if(fade >= 0.35){
-fade = 0.35;
-clearInterval(fadeMusic);
-}
-
-music.volume = fade;
-
-},120);
-
-}catch(err){
-console.log(err);
-}
-
-/* CHAT ANIMATION */
+/* CHAT FLOW */
 
 let delay = 1000;
 
 messages.forEach((msg,index)=>{
+
+/* TYPING */
 
 if(index > 0){
 
 setTimeout(()=>{
 
 if(typings[index-1]){
+
 typings[index-1].style.display='block';
+
 chatArea.scrollTop = chatArea.scrollHeight;
+
 }
 
-},delay-900);
+},delay - 900);
 
 setTimeout(()=>{
 
 if(typings[index-1]){
+
 typings[index-1].style.display='none';
-}
-
-},delay-200);
 
 }
+
+},delay - 200);
+
+}
+
+/* MESSAGE */
 
 setTimeout(()=>{
 
 msg.style.display='block';
 
+/* SOUND CHAT */
+
 chatSound.currentTime = 0;
-chatSound.play();
+
+chatSound.play().catch(()=>{});
 
 chatArea.scrollTop = chatArea.scrollHeight;
 
@@ -588,15 +574,45 @@ delay += 1900;
 
 /* SHOW INVITATION */
 
-setTimeout(()=>{
+setTimeout(async ()=>{
 
 invite.style.display='block';
 
 chatArea.scrollTop = chatArea.scrollHeight;
 
-music.volume = 0.45;
+/* MUSIC START AFTER INVITATION */
 
-},delay+1000);
+music.volume = 0;
+
+try{
+
+await music.play();
+
+let vol = 0;
+
+const fadeMusic = setInterval(()=>{
+
+vol += 0.02;
+
+if(vol >= 0.45){
+
+vol = 0.45;
+
+clearInterval(fadeMusic);
+
+}
+
+music.volume = vol;
+
+},120);
+
+}catch(err){
+
+console.log(err);
+
+}
+
+},delay + 1200);
 
 });
 
